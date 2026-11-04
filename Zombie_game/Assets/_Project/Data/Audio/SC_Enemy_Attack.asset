@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23254b534fa89584fbc645d465410945, type: 3}
+  m_Name: SC_Enemy_Attack
+  m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.Audio.SoundCue
+  _clips:
+  - {fileID: 8300000, guid: 4d46bc54dffb2e849b1c681ec67f1081, type: 3}
+  - {fileID: 8300000, guid: c19d09f4d9607a44da83852756b19372, type: 3}
+  _volume: 0.7
+  _pitchMin: 0.95
+  _pitchMax: 1.05
+  _spatialBlend: 1
+  _maxDistance: 40

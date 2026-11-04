@@ -6,6 +6,28 @@ Art requests: `docs/ART_ASSETS.md`.
 
 The user communicates in Russian — reply in Russian; code, comments, commits and docs are in English.
 
+## 0. Coordination between AIs (this file is shared)
+
+Several AI assistants (Claude, other models, different chats) may work on the project. To avoid getting in each other's way:
+
+1. **Before starting:** `git pull` (or ask the user to), read this file in full, check the "In progress" table.
+2. **Claim the task:** add a row to "In progress" (who, task, files/folders, date) and commit
+   this change **before** writing code. Don't take a task whose files are already claimed by someone else.
+3. **Work in small steps:** one task = one commit; touch only the files of your task.
+   If you need to change someone else's area — write it under "Requests / questions" instead of editing it yourself.
+4. **At the end of a session (always, even if the task isn't finished):** remove/update your row in "In progress",
+   update "Status", "Next", add a line to the "Session log", commit.
+5. If information here contradicts the code — the code is right; fix this file.
+6. Don't rewrite other people's log entries; only append to the end.
+
+### In progress
+| Who (model / chat) | Task | Files / folders | Since |
+|---|---|---|---|
+| — | — | — | — |
+
+### Requests / questions between AIs
+- (empty)
+
 ---
 
 ## 1. Project in brief
@@ -78,6 +100,7 @@ Assemblies: `Game.Core` → `Game.Gameplay` (+InputSystem, AI.Navigation) → `G
 | Enemies | `EnemyDefinition` SO (stats, SpawnCost, ScrapOnKill), `EnemyController` (FSM Spawning→Chasing→Attacking→Dead, NavMeshAgent), `MeleeAttackCycle` (pure), `EnemyFactory` (ObjectPool), `PlayerAnchor` (target), `RuntimeNavMeshBaker`, `EnemyProceduralAnimator` |
 | DevTools | `DebugHud` (IMGUI, temporary), `TargetDummy`, `DamageVolume`, `DevEnemySpawner` (F1/F2), `DevPlayerRespawn` |
 | Editor | `BuildScript`, `SandboxBuilder` (Tools/Sandbox: layers, data, prefabs, `Sandbox_TestRange` scene), `ArtSetup` (Tools/Art/Apply Imported Art) |
+| Audio | `SoundCue` SO, `SfxPlayer` (pool of 24 AudioSources), `PlayerAudio`; editor `AudioSetup` |
 | Tests | 59 EditMode tests: EventBus, Services, GameRandom (golden values), HealthModel, Health/HitZone, Stamina, Weapons, MeleeAttackCycle |
 
 Data: `Data/Weapons/WD_Pistol|SMG|Shotgun`, `Data/Enemies/ED_Husk|ED_Runner`, `Data/Player/PMC_Default`.
@@ -119,6 +142,7 @@ Commits on GitHub: repo setup → Unity project → Core/Combat → player/weapo
 7. Meta (Cores, unlocks), JSON save (`persistentDataPath`, version field, atomic write), hub.
 8. Arena greybox in ProBuilder (4 sectors), editor-baked NavMesh, PlayMode smoke tests, audio, `build.bat`.
 
+Sounds: P1 (12 sounds x2 variants) imported: `Audio/SFX`, cues in `Data/Audio/SC_*`, `SfxPlayer` + `PlayerAudio`, enemy sounds in `EnemyDefinition`. Assignment: Tools > Audio > Apply Imported Audio. P2/P3 — `docs/SFX_ASSETS.md`. Not done: AudioMixer, footsteps, ambience.
 Art (only when the user has generation tokens; don't push for it): Runner → SMG → Shotgun → props from `docs/ART_ASSETS.md`.
 Animations: Mixamo (free, but needs an Adobe account) — the user postponed it; until then `EnemyProceduralAnimator`.
 Balance: two Runners kill the player in 3–4 s — tune once waves and medkits exist.
@@ -133,5 +157,8 @@ Balance: two Runners kill the player in 3–4 s — tune once waves and medkits 
 
 ## 8. Session log
 
-- 2026-11-04: from scratch to a playable range: repo/LFS, Unity 6.3 LTS, Core, Combat, player, weapons, enemies, NavMesh,
-  first AI models (Husk, pistol). 59 tests green.
+Format: `YYYY-MM-DD, model: what was done; what's left`. Only append.
+
+- 2026-11-04, Claude (Opus): from scratch to a playable range: repo/LFS, Unity 6.3 LTS, Core, Combat, player, weapons,
+  enemies, NavMesh, first AI models (Husk, pistol), this file. 59 tests green. Left: commit the art (see Status), Wave Director.
+- 2026-11-04, Claude (Opus): imported sounds (P1) and wired them up. Requires running Tools > Audio > Apply Imported Audio in Unity (if not done yet) and committing.

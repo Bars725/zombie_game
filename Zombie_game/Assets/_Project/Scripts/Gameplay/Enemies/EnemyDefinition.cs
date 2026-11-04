@@ -1,3 +1,4 @@
+using Game.Gameplay.Audio;
 using UnityEngine;
 
 namespace Game.Gameplay.Enemies
@@ -37,6 +38,12 @@ namespace Game.Gameplay.Enemies
         [Tooltip("Corpse stays this long before returning to the pool (s)")]
         [SerializeField, Min(0f)] private float _corpseDuration = 1.5f;
 
+        [Header("Audio")]
+        [Tooltip("Played when it finishes emerging and starts the chase")]
+        [SerializeField] private SoundCue _alertSound;
+        [SerializeField] private SoundCue _attackSound;
+        [SerializeField] private SoundCue _deathSound;
+
         [Header("Waves / economy")]
         [Tooltip("Wave budget points this enemy costs")]
         [SerializeField, Min(1)] private int _spawnCost = 1;
@@ -58,6 +65,9 @@ namespace Game.Gameplay.Enemies
         public float CorpseDuration => _corpseDuration;
         public int SpawnCost => _spawnCost;
         public int ScrapOnKill => _scrapOnKill;
+        public SoundCue AlertSound => _alertSound;
+        public SoundCue AttackSound => _attackSound;
+        public SoundCue DeathSound => _deathSound;
 
         internal void Initialize(string id, string displayName, EnemyController prefab, float maxHealth, float moveSpeed,
             float attackDamage, float attackRange = 1.6f, float attackWindup = 0.45f, float attackRecovery = 0.8f,

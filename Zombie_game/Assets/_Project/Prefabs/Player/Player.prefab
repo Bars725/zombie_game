@@ -50,6 +50,7 @@ GameObject:
   - component: {fileID: 1318784232617052227}
   - component: {fileID: 5379853965986921132}
   - component: {fileID: 3854546286349593471}
+  - component: {fileID: 7538293262228276137}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -232,6 +233,24 @@ MonoBehaviour:
   _respawnDelay: 2
   _spawnProtection: 2
   _clearEnemiesOnRespawn: 1
+--- !u!114 &7538293262228276137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3612110906302028464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa94df3bf0d7654dbde62160dc82124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.Audio.PlayerAudio
+  _weapons: {fileID: 3726668639539453987}
+  _health: {fileID: 2929491644835332215}
+  _hitFlesh: {fileID: 11400000, guid: 7a69df37ff29a3441ac6f01c8d3a2e49, type: 2}
+  _hitSurface: {fileID: 11400000, guid: 2d9e8f388805e6448a56eab377eb76da, type: 2}
+  _hurt: {fileID: 11400000, guid: 11f9fa177b5efbb4f82863d5c3e485f2, type: 2}
+  _hurtCooldown: 0.35
 --- !u!1 &3852753511860437789
 GameObject:
   m_ObjectHideFlags: 0

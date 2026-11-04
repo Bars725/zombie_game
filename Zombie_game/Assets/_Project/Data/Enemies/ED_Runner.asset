@@ -26,5 +26,8 @@ MonoBehaviour:
   _attackRecovery: 0.6
   _spawnDuration: 1
   _corpseDuration: 1.5
+  _alertSound: {fileID: 11400000, guid: daddaf6c677f9034d8a9f7c64857ddef, type: 2}
+  _attackSound: {fileID: 11400000, guid: 1817de5537b2d0c4bb292cb728d9decd, type: 2}
+  _deathSound: {fileID: 11400000, guid: b89dcb4a1bc66974bb64f43bbeed43cf, type: 2}
   _spawnCost: 2
   _scrapOnKill: 90

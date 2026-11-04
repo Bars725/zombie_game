@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23254b534fa89584fbc645d465410945, type: 3}
+  m_Name: SC_Enemy_Death
+  m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.Audio.SoundCue
+  _clips:
+  - {fileID: 8300000, guid: fcc92e736c6a22f4699f2b7b2bcb122c, type: 3}
+  - {fileID: 8300000, guid: 21c8c1102298a8f44b388e8f1d9b61e7, type: 3}
+  _volume: 0.75
+  _pitchMin: 0.95
+  _pitchMax: 1.05
+  _spatialBlend: 1
+  _maxDistance: 40

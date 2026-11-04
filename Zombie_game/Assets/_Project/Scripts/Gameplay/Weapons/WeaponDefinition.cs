@@ -1,3 +1,4 @@
+using Game.Gameplay.Audio;
 using Game.Gameplay.Combat;
 using UnityEngine;
 
@@ -48,6 +49,9 @@ namespace Game.Gameplay.Weapons
         [Header("Presentation")]
         [Tooltip("First-person model, placed at the camera's viewmodel socket. Empty = placeholder box.")]
         [SerializeField] private GameObject _viewModel;
+        [SerializeField] private SoundCue _fireSound;
+        [SerializeField] private SoundCue _dryFireSound;
+        [SerializeField] private SoundCue _reloadSound;
 
         public string Id => _id;
         public string DisplayName => _displayName;
@@ -68,6 +72,9 @@ namespace Game.Gameplay.Weapons
         public int StartingReserve => Mathf.Min(_startingReserve, _maxReserve);
         public int Price => _price;
         public GameObject ViewModel => _viewModel;
+        public SoundCue FireSound => _fireSound;
+        public SoundCue DryFireSound => _dryFireSound;
+        public SoundCue ReloadSound => _reloadSound;
 
         /// <summary>Damage per pellet at a distance, with linear falloff between FalloffStart and FalloffEnd.</summary>
         public float DamageAtDistance(float distance)

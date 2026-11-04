@@ -1,4 +1,5 @@
 using System;
+using Game.Gameplay.Audio;
 using Game.Gameplay.Combat;
 using UnityEngine;
 using UnityEngine.AI;
@@ -142,6 +143,7 @@ namespace Game.Gameplay.Enemies
             if (t >= 1f)
             {
                 _health.Invulnerable = false;
+                SfxPlayer.Play(Definition.AlertSound, transform.position + Vector3.up * 1.6f);
                 EnterState(State.Chasing);
             }
         }
@@ -189,6 +191,7 @@ namespace Game.Gameplay.Enemies
             switch (_attack.Tick(dt))
             {
                 case MeleeAttackCycle.Result.HitMoment:
+                    SfxPlayer.Play(Definition.AttackSound, transform.position + Vector3.up * 1.2f);
                     if (HorizontalDistanceTo(target.Position) <= Definition.AttackRange + Definition.AttackReach)
                     {
                         Vector3 dir = (target.Position - transform.position).normalized;
@@ -217,6 +220,7 @@ namespace Game.Gameplay.Enemies
         {
             if (CurrentState == State.Dead || CurrentState == State.Inactive) return;
             EnterState(State.Dead);
+            SfxPlayer.Play(Definition.DeathSound, transform.position + Vector3.up);
             Killed?.Invoke(this);
         }
 

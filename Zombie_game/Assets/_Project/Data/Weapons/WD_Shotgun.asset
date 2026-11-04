@@ -29,3 +29,7 @@ MonoBehaviour:
   _maxReserve: 48
   _startingReserve: 24
   _price: 1500
+  _viewModel: {fileID: 0}
+  _fireSound: {fileID: 11400000, guid: 842fa587db60f284ea813ca79f876798, type: 2}
+  _dryFireSound: {fileID: 11400000, guid: aa20e27badd796646a920c4e4985b938, type: 2}
+  _reloadSound: {fileID: 11400000, guid: cbab616194e5c8945927f25dabf04396, type: 2}
