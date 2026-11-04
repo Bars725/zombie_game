@@ -116,6 +116,7 @@ namespace Game.Gameplay.Enemies
                     Stop();
                     _health.Invulnerable = true; // can't be killed while still under the floor
                     SetVisualDepth(EmergeDepth);
+                    SfxPlayer.Play(Definition.SpawnSound, transform.position);
                     break;
                 case State.Chasing:
                     Resume();

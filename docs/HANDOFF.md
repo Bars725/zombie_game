@@ -126,10 +126,13 @@ Layers: 8 Player, 9 Enemy, 10 Interactable. Art: `Art/Characters/Husk/SK_Husk.fb
 Done and verified in Play mode: movement, shooting (3 weapons), head hits, targets, Husk/Runner enemies
 (spawn, chase, attack, death, pool), NavMesh, death/respawn on the range, Husk model, pistol model in hand.
 Jump while sprinting: coyote time/buffer/ground probe added — **the user has not confirmed the fix yet**.
+P2 audio assets have been imported and `Tools > Audio > Apply Imported Audio` has been applied in Unity; cue assets,
+enemy definitions, the player prefab, and the test-range scene are modified locally. Gameplay audio still needs a Play
+mode check.
 
 Commits on GitHub: repo setup → Unity project → Core/Combat → player/weapons/range → enemies.
-**Not committed:** art import (Husk, pistol, ArtSetup, WeaponViewModel, EnemyProceduralAnimator) + this file —
-`_out\commit_msg.txt` is ready, the user needs to run `run_tests.bat` and `commit.bat`.
+The art import (Husk, pistol, ArtSetup, WeaponViewModel, EnemyProceduralAnimator) is committed on `main`.
+`_out\commit_msg.last.txt` records the completed import; there is no pending `_out\commit_msg.txt`.
 
 ## 6. Next (in priority order)
 
@@ -144,7 +147,7 @@ Commits on GitHub: repo setup → Unity project → Core/Combat → player/weapo
 7. Meta (Cores, unlocks), JSON save (`persistentDataPath`, version field, atomic write), hub.
 8. Arena greybox in ProBuilder (4 sectors), editor-baked NavMesh, PlayMode smoke tests, audio, `build.bat`.
 
-Sounds: P1 (12 sounds x2 variants) imported: `Audio/SFX`, cues in `Data/Audio/SC_*`, `SfxPlayer` + `PlayerAudio`, enemy sounds in `EnemyDefinition`. Assignment: Tools > Audio > Apply Imported Audio. P2/P3 — `docs/SFX_ASSETS.md`. Not done: AudioMixer, footsteps, ambience.
+Sounds: P1 (12 sounds x2 variants) and P2 variants are imported. `Tools > Audio > Apply Imported Audio` creates cues and assigns footsteps, landing, hitmarker, weapon switch, enemy emerge, and looping facility ambience. The wave siren cue is created for the Wave Director. P2 gameplay audio has not yet been verified in Play mode. No AudioMixer yet.
 Art (only when the user has generation tokens; don't push for it): Runner → SMG → Shotgun → props from `docs/ART_ASSETS.md`.
 Animations: Mixamo (free, but needs an Adobe account) — the user postponed it; until then `EnemyProceduralAnimator`.
 Balance: two Runners kill the player in 3–4 s — tune once waves and medkits exist.
@@ -165,3 +168,4 @@ Format: `YYYY-MM-DD, model: what was done; what's left`. Only append.
   enemies, NavMesh, first AI models (Husk, pistol), this file. 59 tests green. Left: commit the art (see Status), Wave Director.
 - 2026-11-04, Claude (Opus): imported sounds (P1) and wired them up. Requires running Tools > Audio > Apply Imported Audio in Unity (if not done yet) and committing.
 - 2026-11-04, Claude (Opus): design moved into the Obsidian vault (concept, systems, roadmap, Inbox, rules for AI).
+- 2026-11-04, Codex: imported P2 audio variants, added player audio hooks and looping facility ambience, prepared the wave siren cue; Unity import/setup and Wave Director remain.

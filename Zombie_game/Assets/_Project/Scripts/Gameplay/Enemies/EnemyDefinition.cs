@@ -39,6 +39,7 @@ namespace Game.Gameplay.Enemies
         [SerializeField, Min(0f)] private float _corpseDuration = 1.5f;
 
         [Header("Audio")]
+        [SerializeField] private SoundCue _spawnSound;
         [Tooltip("Played when it finishes emerging and starts the chase")]
         [SerializeField] private SoundCue _alertSound;
         [SerializeField] private SoundCue _attackSound;
@@ -65,6 +66,7 @@ namespace Game.Gameplay.Enemies
         public float CorpseDuration => _corpseDuration;
         public int SpawnCost => _spawnCost;
         public int ScrapOnKill => _scrapOnKill;
+        public SoundCue SpawnSound => _spawnSound;
         public SoundCue AlertSound => _alertSound;
         public SoundCue AttackSound => _attackSound;
         public SoundCue DeathSound => _deathSound;
