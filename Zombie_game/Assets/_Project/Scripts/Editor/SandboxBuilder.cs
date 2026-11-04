@@ -2,11 +2,14 @@ using System;
 using System.Linq;
 using Game.Gameplay.Combat;
 using Game.Gameplay.DevTools;
+using Game.Gameplay.Enemies;
 using Game.Gameplay.Player;
 using Game.Gameplay.Weapons;
+using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -16,7 +19,8 @@ namespace Game.EditorTools
     /// Generates the shooting range scene and everything it needs, so the sandbox is reproducible:
     ///   - layers Player / Enemy / Interactable
     ///   - Data/Player/PMC_Default, Data/Weapons/WD_Pistol, WD_SMG, WD_Shotgun   (created only if missing)
-    ///   - Prefabs/Player/Player.prefab                                          (created only if missing)
+    ///   - Data/Enemies/ED_Husk, ED_Runner + Prefabs/Enemies/*                    (created only if missing)
+    ///   - Prefabs/Player/Player.prefab (created if missing; missing components are added)
     ///   - Scenes/Sandbox_TestRange.unity                                        (always regenerated)
     /// Menu: Tools > Sandbox. Batchmode: -executeMethod Game.EditorTools.SandboxBuilder.RebuildFromCommandLine
     /// Existing data assets are never overwritten, so tuning done in the Inspector survives a rebuild.
@@ -29,6 +33,9 @@ namespace Game.EditorTools
         private const string MovementConfigPath = Root + "/Data/Player/PMC_Default.asset";
         private const string WeaponsFolder = Root + "/Data/Weapons";
         private const string MaterialsFolder = Root + "/Materials/Sandbox";
+        private const string EnemiesDataFolder = Root + "/Data/Enemies";
+        private const string EnemiesPrefabFolder = Root + "/Prefabs/Enemies";
+        private const int IgnoreRaycastLayer = 2;
 
         private static readonly Vector3 PlayerSpawn = new Vector3(0f, 0f, -5f);
 
@@ -74,6 +81,8 @@ namespace Game.EditorTools
             EnsureFolder(Root + "/Prefabs/Player");
             EnsureFolder(Root + "/Scenes");
             EnsureFolder(MaterialsFolder);
+            EnsureFolder(EnemiesDataFolder);
+            EnsureFolder(EnemiesPrefabFolder);
 
             PlayerMovementConfig config = LoadOrCreate<PlayerMovementConfig>(MovementConfigPath, null);
             WeaponDefinition[] loadout =
@@ -100,8 +109,21 @@ namespace Game.EditorTools
             {
                 playerPrefab = CreatePlayerPrefab(config, loadout);
             }
+            EnsurePlayerPrefabComponents();
 
             Materials mats = CreateMaterials();
+            AssetDatabase.SaveAssets();
+            EnemyDefinition[] enemies =
+            {
+                LoadOrCreate<EnemyDefinition>($"{EnemiesDataFolder}/ED_Husk.asset", d => d.Initialize(
+                    "husk", "Husk", LoadOrCreateEnemyPrefab("Enemy_Husk", mats.Husk, 1f),
+                    maxHealth: 100f, moveSpeed: 2.2f, attackDamage: 20f, attackRange: 1.6f,
+                    attackWindup: 0.5f, attackRecovery: 0.9f, acceleration: 10f, spawnCost: 1, scrapOnKill: 60)),
+                LoadOrCreate<EnemyDefinition>($"{EnemiesDataFolder}/ED_Runner.asset", d => d.Initialize(
+                    "runner", "Runner", LoadOrCreateEnemyPrefab("Enemy_Runner", mats.Runner, 0.85f),
+                    maxHealth: 60f, moveSpeed: 5f, attackDamage: 12f, attackRange: 1.5f,
+                    attackWindup: 0.35f, attackRecovery: 0.6f, acceleration: 20f, spawnCost: 2, scrapOnKill: 90)),
+            };
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
             GameObject defaultCamera = GameObject.Find("Main Camera");
@@ -109,6 +131,10 @@ namespace Game.EditorTools
 
             BuildEnvironment(mats);
             BuildTargets(mats);
+            // NewScene can unload assets created earlier in this call; reload them from disk
+            // so the scene does not serialize dead (null) references.
+            BuildEnemySpawning(new[] { $"{EnemiesDataFolder}/ED_Husk.asset", $"{EnemiesDataFolder}/ED_Runner.asset" }
+                .Select(LoadRequired<EnemyDefinition>).ToArray());
 
             var player = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, scene);
             player.transform.SetPositionAndRotation(PlayerSpawn, Quaternion.identity);
@@ -185,7 +211,7 @@ namespace Game.EditorTools
 
         private struct Materials
         {
-            public Material Ground, Wall, Obstacle, Hazard, Target;
+            public Material Ground, Wall, Obstacle, Hazard, Target, Husk, Runner;
         }
 
         private static Materials CreateMaterials() => new Materials
@@ -195,11 +221,20 @@ namespace Game.EditorTools
             Obstacle = LoadOrCreateMaterial("M_Obstacle", new Color(0.3f, 0.45f, 0.6f)),
             Hazard = LoadOrCreateMaterial("M_Hazard", new Color(0.8f, 0.15f, 0.1f)),
             Target = LoadOrCreateMaterial("M_Target", new Color(0.85f, 0.55f, 0.2f)),
+            Husk = LoadOrCreateMaterial("M_Husk", new Color(0.35f, 0.5f, 0.3f)),
+            Runner = LoadOrCreateMaterial("M_Runner", new Color(0.7f, 0.22f, 0.18f)),
         };
 
         private static void BuildEnvironment(Materials m)
         {
             Transform env = new GameObject("Environment").transform;
+
+            // NavMesh for enemies, baked at scene start (see RuntimeNavMeshBaker).
+            var surface = env.gameObject.AddComponent<NavMeshSurface>();
+            surface.collectObjects = CollectObjects.All;
+            surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+            surface.layerMask = ~(LayerBit("Player") | LayerBit("Enemy") | (1 << IgnoreRaycastLayer));
+            env.gameObject.AddComponent<RuntimeNavMeshBaker>();
 
             Box("Ground", env, new Vector3(0f, -0.5f, 10f), new Vector3(60f, 1f, 70f), m.Ground);
             Box("Wall_North", env, new Vector3(0f, 2f, 45f), new Vector3(60f, 4f, 1f), m.Wall);
@@ -222,6 +257,7 @@ namespace Game.EditorTools
 
             // Hazard pad: tests player damage and segmented regen
             GameObject pad = Box("DamagePad_10perTick", course, new Vector3(-12f, 0.05f, -2f), new Vector3(3f, 0.1f, 3f), m.Hazard);
+            pad.layer = IgnoreRaycastLayer; // not shootable, not a NavMesh obstacle
             var trigger = pad.GetComponent<BoxCollider>();
             trigger.isTrigger = true;
             trigger.size = new Vector3(1f, 20f, 1f);     // 2 m tall in world space (scale y = 0.1)
@@ -260,6 +296,138 @@ namespace Game.EditorTools
             head.transform.localScale = Vector3.one * 0.45f;
             head.GetComponent<Renderer>().sharedMaterial = material;
             head.AddComponent<HitZone>().Configure(HitZoneType.Head, 2f, health);
+        }
+
+        // ---------------------------------------------------------------- enemies
+
+        private static void BuildEnemySpawning(EnemyDefinition[] enemies)
+        {
+            var root = new GameObject("EnemySpawning");
+            var factory = root.AddComponent<EnemyFactory>();
+            var spawner = root.AddComponent<DevEnemySpawner>();
+
+            Vector3[] points =
+            {
+                new Vector3(-22f, 0f, 40f), new Vector3(22f, 0f, 40f),
+                new Vector3(0f, 0f, 42f), new Vector3(-25f, 0f, 20f), new Vector3(25f, 0f, 20f),
+            };
+            var transforms = new Object[points.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                Transform t = new GameObject($"SpawnPoint_{i + 1}").transform;
+                t.SetParent(root.transform, false);
+                t.position = points[i];
+                t.rotation = Quaternion.LookRotation(PlayerSpawn - points[i]);
+                transforms[i] = t;
+            }
+
+            AssetDatabase.SaveAssets();
+            SetRefs(spawner, ("_factory", factory));
+            SetArray(spawner, "_definitions", enemies.Cast<Object>().ToArray());
+            SetArray(spawner, "_spawnPoints", transforms);
+        }
+
+        private static EnemyController LoadOrCreateEnemyPrefab(string name, Material material, float width)
+        {
+            string path = $"{EnemiesPrefabFolder}/{name}.prefab";
+            var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (existing != null) return existing.GetComponent<EnemyController>();
+
+            int enemyLayer = LayerMask.NameToLayer("Enemy");
+            var root = new GameObject(name);
+            if (enemyLayer >= 0) root.layer = enemyLayer;
+
+            var agent = root.AddComponent<NavMeshAgent>();
+            agent.radius = 0.4f;
+            agent.height = 1.8f;
+            agent.baseOffset = 0f;
+
+            var body = root.AddComponent<CapsuleCollider>();
+            body.center = new Vector3(0f, 0.9f, 0f);
+            body.height = 1.8f;
+            body.radius = 0.35f;
+
+            var health = root.AddComponent<Health>();
+            var controller = root.AddComponent<EnemyController>();
+
+            // Visual only (no colliders): moved down/up for emerge and sink.
+            Transform visual = new GameObject("Visual").transform;
+            visual.SetParent(root.transform, false);
+            GameObject torso = VisualPrimitive(PrimitiveType.Capsule, "Torso", visual, material);
+            torso.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+            torso.transform.localScale = new Vector3(0.7f * width, 0.8f, 0.7f * width);
+            GameObject headMesh = VisualPrimitive(PrimitiveType.Sphere, "Head", visual, material);
+            headMesh.transform.localPosition = new Vector3(0f, 1.62f, 0f);
+            headMesh.transform.localScale = Vector3.one * 0.38f;
+            GameObject armL = VisualPrimitive(PrimitiveType.Cube, "ArmL", visual, material);
+            armL.transform.localPosition = new Vector3(-0.3f * width, 1.15f, 0.35f);
+            armL.transform.localScale = new Vector3(0.12f, 0.12f, 0.6f);
+            GameObject armR = VisualPrimitive(PrimitiveType.Cube, "ArmR", visual, material);
+            armR.transform.localPosition = new Vector3(0.3f * width, 1.15f, 0.35f);
+            armR.transform.localScale = new Vector3(0.12f, 0.12f, 0.6f);
+
+            var headHitbox = new GameObject("HeadHitbox");
+            headHitbox.transform.SetParent(root.transform, false);
+            if (enemyLayer >= 0) headHitbox.layer = enemyLayer;
+            var headCollider = headHitbox.AddComponent<SphereCollider>();
+            headCollider.center = new Vector3(0f, 1.62f, 0f);
+            headCollider.radius = 0.2f;
+            headHitbox.AddComponent<HitZone>().Configure(HitZoneType.Head, 2f, health);
+
+            SetRefs(controller, ("_visual", visual));
+            SetArray(controller, "_hitColliders", new Object[] { body, headCollider });
+
+            GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+            Object.DestroyImmediate(root);
+            Debug.Log($"[SandboxBuilder] Created {path}");
+            return prefab.GetComponent<EnemyController>();
+        }
+
+        private static GameObject VisualPrimitive(PrimitiveType type, string name, Transform parent, Material material)
+        {
+            GameObject go = GameObject.CreatePrimitive(type);
+            go.name = name;
+            Object.DestroyImmediate(go.GetComponent<Collider>());
+            go.transform.SetParent(parent, false);
+            go.GetComponent<Renderer>().sharedMaterial = material;
+            return go;
+        }
+
+        /// <summary>Adds components introduced after the prefab was first generated, without touching tuning.</summary>
+        private static void EnsurePlayerPrefabComponents()
+        {
+            GameObject contents = PrefabUtility.LoadPrefabContents(PlayerPrefabPath);
+            try
+            {
+                bool changed = false;
+                if (!contents.TryGetComponent(out PlayerAnchor _)) { contents.AddComponent<PlayerAnchor>(); changed = true; }
+                if (!contents.TryGetComponent(out DevPlayerRespawn _)) { contents.AddComponent<DevPlayerRespawn>(); changed = true; }
+                if (changed)
+                {
+                    PrefabUtility.SaveAsPrefabAsset(contents, PlayerPrefabPath);
+                    Debug.Log("[SandboxBuilder] Added PlayerAnchor / DevPlayerRespawn to the Player prefab");
+                }
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(contents);
+            }
+        }
+
+        private static T LoadRequired<T>(string path) where T : Object
+        {
+            T loaded = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (loaded == null)
+            {
+                throw new InvalidOperationException($"[SandboxBuilder] Could not reload {typeof(T).Name} '{path}'.");
+            }
+            return loaded;
+        }
+
+        private static int LayerBit(string layerName)
+        {
+            int layer = LayerMask.NameToLayer(layerName);
+            return layer >= 0 ? 1 << layer : 0;
         }
 
         // ---------------------------------------------------------------- helpers

@@ -23,6 +23,8 @@ namespace Game.Gameplay.DevTools
         private string _lastHitText = "-";
         private GUIStyle _style;
         private GUIStyle _centerStyle;
+        private DevEnemySpawner _spawner;
+        private DevPlayerRespawn _respawn;
 
         private void OnEnable()
         {
@@ -32,6 +34,12 @@ namespace Game.Gameplay.DevTools
         private void OnDisable()
         {
             if (_weapons != null) _weapons.Hit -= HandleHit;
+        }
+
+        private void Start()
+        {
+            _spawner = FindFirstObjectByType<DevEnemySpawner>();
+            _respawn = GetComponent<DevPlayerRespawn>();
         }
 
         private void Update()
@@ -78,6 +86,15 @@ namespace Game.Gameplay.DevTools
                 GUILayout.Label($"[{_weapons.CurrentIndex + 1}] {w.Definition.DisplayName}  {w.Magazine}/{w.Reserve}{reload}", _style);
             }
             GUILayout.Label($"Last hit: {_lastHitText}", _style);
+            if (_input != null) GUILayout.Label($"Keys: {_input.DebugHeldKeys}", _style);
+            if (_spawner != null)
+            {
+                GUILayout.Label($"Enemies: {_spawner.AliveCount}  spawning {(_spawner.Spawning ? "ON" : "OFF")}  (F1 toggle, F2 clear)", _style);
+            }
+            if (_respawn != null && _respawn.IsWaitingToRespawn)
+            {
+                GUILayout.Label("<color=red>YOU DIED - respawning...</color>", _style);
+            }
 
             if (_input != null && !_input.GameplayActive)
             {

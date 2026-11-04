@@ -16,3 +16,6 @@ Desktop.ini
 
 # Files moved aside by tools (safe to delete by hand)
 /_to_delete/
+
+# Raw art drops from ComfyUI etc. (imported into Assets/_Project/Art by hand)
+/_incoming_art/

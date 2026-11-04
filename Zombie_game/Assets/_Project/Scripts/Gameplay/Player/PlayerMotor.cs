@@ -23,6 +23,8 @@ namespace Game.Gameplay.Player
         private Vector3 _horizontalVelocity;
         private float _verticalVelocity;
         private float _currentHeight;
+        private float _lastGroundedTime = float.NegativeInfinity;
+        private float _lastJumpPressedTime = float.NegativeInfinity;
 
         public StaminaModel Stamina => _stamina;
         public bool IsGrounded { get; private set; }
@@ -53,7 +55,12 @@ namespace Game.Gameplay.Player
             if (dt <= 0f) return;
 
             Vector2 move = _input != null ? _input.Move : Vector2.zero;
-            bool grounded = _controller.isGrounded;
+            float now = Time.time;
+
+            // isGrounded can flicker for a frame at speed; a short ground probe makes it reliable.
+            bool grounded = _controller.isGrounded || (_verticalVelocity <= 0f && ProbeGround());
+            if (grounded) _lastGroundedTime = now;
+            if (_input != null && _input.JumpPressed) _lastJumpPressedTime = now;
 
             UpdateCrouch(dt);
 
@@ -68,13 +75,17 @@ namespace Game.Gameplay.Player
             float accel = grounded ? _config.GroundAcceleration : _config.AirAcceleration;
             _horizontalVelocity = Vector3.MoveTowards(_horizontalVelocity, wish, accel * dt);
 
-            if (grounded)
+            if (grounded && _verticalVelocity < 0f) _verticalVelocity = GroundStickVelocity;
+
+            // Coyote time + jump buffer: a press slightly before landing or just after
+            // running off an edge still jumps. Works the same while sprinting.
+            bool jumpBuffered = now - _lastJumpPressedTime <= _config.JumpBufferTime;
+            bool canJump = now - _lastGroundedTime <= _config.CoyoteTime && _verticalVelocity <= 0f;
+            if (jumpBuffered && canJump && !IsCrouching)
             {
-                if (_verticalVelocity < 0f) _verticalVelocity = GroundStickVelocity;
-                if (_input != null && _input.JumpPressed && !IsCrouching)
-                {
-                    _verticalVelocity = Mathf.Sqrt(2f * _config.Gravity * _config.JumpHeight);
-                }
+                _verticalVelocity = Mathf.Sqrt(2f * _config.Gravity * _config.JumpHeight);
+                _lastJumpPressedTime = float.NegativeInfinity;
+                _lastGroundedTime = float.NegativeInfinity;
             }
             _verticalVelocity -= _config.Gravity * dt;
 
@@ -97,6 +108,15 @@ namespace Game.Gameplay.Player
                 _currentHeight = Mathf.MoveTowards(_currentHeight, target, _config.CrouchTransitionSpeed * dt);
                 ApplyHeight(_currentHeight);
             }
+        }
+
+        private bool ProbeGround()
+        {
+            float radius = _controller.radius * 0.9f;
+            Vector3 origin = transform.position + Vector3.up * (radius + 0.05f);
+            float distance = 0.05f + _controller.skinWidth + 0.1f;
+            int mask = _obstacleMask & ~(1 << gameObject.layer);
+            return Physics.SphereCast(origin, radius, Vector3.down, out _, distance, mask, QueryTriggerInteraction.Ignore);
         }
 
         private bool CanStandUp()

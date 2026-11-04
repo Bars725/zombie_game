@@ -18,6 +18,10 @@ namespace Game.Gameplay.Player
         [Header("Jump / gravity")]
         [Min(0f)] public float JumpHeight = 1.1f;
         [Min(0.1f)] public float Gravity = 20f;
+        [Tooltip("Jump still allowed this long after leaving the ground (s)")]
+        [Min(0f)] public float CoyoteTime = 0.12f;
+        [Tooltip("A jump pressed this long before landing still triggers (s)")]
+        [Min(0f)] public float JumpBufferTime = 0.15f;
 
         [Header("Body (pivot at feet)")]
         [Min(0.5f)] public float StandHeight = 1.8f;

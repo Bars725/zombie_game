@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f4eb3eec881a3e4c858211128b90adb, type: 3}
+  m_Name: ED_Runner
+  m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.Enemies.EnemyDefinition
+  _id: runner
+  _displayName: Runner
+  _prefab: {fileID: 5417873997088458708, guid: 46d5d97fce1ff2748a632b6732ef91d3, type: 3}
+  _maxHealth: 60
+  _moveSpeed: 5
+  _acceleration: 20
+  _angularSpeed: 540
+  _attackDamage: 12
+  _attackRange: 1.5
+  _attackReach: 0.5
+  _attackWindup: 0.35
+  _attackRecovery: 0.6
+  _spawnDuration: 1
+  _corpseDuration: 1.5
+  _spawnCost: 2
+  _scrapOnKill: 90

@@ -33,6 +33,26 @@ namespace Game.Gameplay.Player
         public bool ReloadPressed => GameplayActive && _actions.Reload.WasPressedThisFrame();
         public bool InteractPressed => GameplayActive && _actions.Interact.WasPressedThisFrame();
 
+        /// <summary>Raw key state for the debug HUD (shows keyboard ghosting: keys the board did not report).</summary>
+        public string DebugHeldKeys
+        {
+            get
+            {
+                if (_actions == null) return "";
+                var sb = new System.Text.StringBuilder();
+                Vector2 m = _actions.Move.ReadValue<Vector2>();
+                if (m.y > 0.1f) sb.Append("W ");
+                if (m.y < -0.1f) sb.Append("S ");
+                if (m.x < -0.1f) sb.Append("A ");
+                if (m.x > 0.1f) sb.Append("D ");
+                if (_actions.Sprint.IsPressed()) sb.Append("Shift ");
+                if (_actions.Jump.IsPressed()) sb.Append("Space ");
+                if (_actions.Crouch.IsPressed()) sb.Append("Crouch ");
+                if (_actions.Fire.IsPressed()) sb.Append("LMB ");
+                return sb.ToString();
+            }
+        }
+
         /// <summary>0-based slot pressed this frame (keys 1..3), or -1.</summary>
         public int WeaponSlotPressed
         {

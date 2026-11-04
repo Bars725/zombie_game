@@ -30,7 +30,7 @@ tools\build.bat [dev]          :: Windows build -> _out\Builds\Windows\ZombieGam
 tools\commit.bat               :: commit + push using _out\commit_msg.txt (with safety checks)
 ```
 
-Code layout and rules: `docs/ARCHITECTURE.md`. Design: `docs/GDD.md`.
+Code layout and rules: `docs/ARCHITECTURE.md`. Design: `docs/GDD.md`. Art requests: `docs/ART_ASSETS.md`.
 
 The scripts read the editor version from `ProjectVersion.txt` and look for it in Unity Hub's
 custom install folder, `D:\Unity\`, and `%ProgramFiles%\Unity\Hub\Editor\`. If your editor

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f4eb3eec881a3e4c858211128b90adb, type: 3}
+  m_Name: ED_Husk
+  m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.Enemies.EnemyDefinition
+  _id: husk
+  _displayName: Husk
+  _prefab: {fileID: 6176454604401476383, guid: fc4e2b8a830049d4eb264ee2f0a5c60a, type: 3}
+  _maxHealth: 100
+  _moveSpeed: 2.2
+  _acceleration: 10
+  _angularSpeed: 540
+  _attackDamage: 20
+  _attackRange: 1.6
+  _attackReach: 0.5
+  _attackWindup: 0.5
+  _attackRecovery: 0.9
+  _spawnDuration: 1
+  _corpseDuration: 1.5
+  _spawnCost: 1
+  _scrapOnKill: 60
