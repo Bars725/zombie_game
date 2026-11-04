@@ -130,10 +130,12 @@ Jump while sprinting: coyote time/buffer/ground probe added — **the user has n
 P2 audio assets have been imported and `Tools > Audio > Apply Imported Audio` has been applied in Unity; cue assets,
 enemy definitions, the player prefab, and the test-range scene are modified locally. Gameplay audio still needs a Play
 mode check.
-Wave Director logic and event contracts are implemented. `SandboxBuilder` now creates it with the test range; the
-currently saved scene needs a rebuild before runtime verification.
-These changes remain uncommitted. The tracked `.obsidian/graph.json` also has a local zoom change, and `commit.bat`
-stages all files; keep that user setting out of the commit.
+Wave Director logic and event contracts are implemented. `SandboxBuilder` creates it with the test range. Inspection
+found the saved scene still had only `DevEnemySpawner`, so the HUD could not find wave data. The saved scene now has an
+enabled `WaveDirector` and a disabled `DevEnemySpawner`; the user confirmed the HUD counters and timer work in Play mode.
+`PlayerMotor` now repairs missing runtime initialization (including its stamina model) before updating, and disables
+itself with an error if its required CharacterController is absent. The user confirmed the null-reference fix works.
+These changes are local and uncommitted.
 
 Commits on GitHub: repo setup → Unity project → Core/Combat → player/weapons/range → enemies.
 The art import (Husk, pistol, ArtSetup, WeaponViewModel, EnemyProceduralAnimator) is committed on `main`.
@@ -141,17 +143,15 @@ The art import (Husk, pistol, ArtSetup, WeaponViewModel, EnemyProceduralAnimator
 
 ## 6. Next (in priority order)
 
-1. **Wave Director**: implemented in `Scripts/Gameplay/Waves`; `SandboxBuilder` now places it instead of
-   `DevEnemySpawner`. Rebuild the test range and verify wave pacing, spawn visibility/distance, cap, and siren in Play mode.
-   Uses `EnemyDefinition.SpawnCost`, 20–40 s lulls, `WaveStarted/WaveCleared/WavesCompleted`, and `GameRandom.Fork("waves")`.
-2. **Economy**: `Wallet` (pure, tests), Scrap for hits/kills (`ScrapOnKill`) via `EntityDiedEvent`, show in HUD.
-3. **Interaction**: `IInteractable` + raycast from the camera (E), wall-buys (`WeaponDefinition.Price`), ammo station,
+1. **Economy**: implement `Wallet` (pure), Scrap for hits/kills (`ScrapOnKill`) via `EntityDiedEvent`, show in HUD.
+   Wave Director, wave counters, and lull timer are implemented and user-verified in Play mode.
+2. **Interaction**: `IInteractable` + raycast from the camera (E), wall-buys (`WeaponDefinition.Price`), ammo station,
    Scrap doors, sectors (spawn points activate when a sector opens).
-4. Death → results screen (instead of DevPlayerRespawn in real runs), real HUD on uGUI.
-5. Puzzles (signal graph: Lever/Plate/KeySlot → AND/Sequence/Timer → Door), power chain of 3 nodes.
-6. Forge (weapon tiers), StatSystem + implant draft, objective (holdout) and extraction, run seed.
-7. Meta (Cores, unlocks), JSON save (`persistentDataPath`, version field, atomic write), hub.
-8. Arena greybox in ProBuilder (4 sectors), editor-baked NavMesh, PlayMode smoke tests, audio, `build.bat`.
+3. Death → results screen (instead of DevPlayerRespawn in real runs), real HUD on uGUI.
+4. Puzzles (signal graph: Lever/Plate/KeySlot → AND/Sequence/Timer → Door), power chain of 3 nodes.
+5. Forge (weapon tiers), StatSystem + implant draft, objective (holdout) and extraction, run seed.
+6. Meta (Cores, unlocks), JSON save (`persistentDataPath`, version field, atomic write), hub.
+7. Arena greybox in ProBuilder (4 sectors), editor-baked NavMesh, PlayMode smoke tests, audio, `build.bat`.
 
 Sounds: P1 (12 sounds x2 variants) and P2 variants are imported. `Tools > Audio > Apply Imported Audio` creates cues and assigns footsteps, landing, hitmarker, weapon switch, enemy emerge, and looping facility ambience. The wave siren cue is created for the Wave Director. P2 gameplay audio has not yet been verified in Play mode. No AudioMixer yet.
 Art (only when the user has generation tokens; don't push for it): Runner → SMG → Shotgun → props from `docs/ART_ASSETS.md`.
@@ -176,3 +176,8 @@ Format: `YYYY-MM-DD, model: what was done; what's left`. Only append.
 - 2026-11-04, Claude (Opus): design moved into the Obsidian vault (concept, systems, roadmap, Inbox, rules for AI).
 - 2026-11-04, Codex: imported P2 audio variants, added player audio hooks and looping facility ambience, prepared the wave siren cue; Unity import/setup and Wave Director remain.
 - 2026-11-04, Codex: implemented budget-based Wave Director and event flow, switched generated test range from dev spawner, added safe SHA-256 resource archiver for `_incoming_art`; Unity rebuild/Play mode verification remains.
+- 2026-11-04, Codex: after the user confirmed the wave game runs, added HUD counters for cleared/current waves, living/total enemies, and countdown to the next wave; HUD compilation and Play mode check remain.
+- 2026-11-04, Codex: traced missing HUD values to the saved scene lacking `WaveDirector`; installed it directly into `Sandbox_TestRange` and disabled the legacy spawner. Reopen/reload the scene and verify in Play mode.
+- 2026-11-04, Codex: fixed the reported `PlayerMotor.Update` null reference by ensuring controller/config/stamina runtime state before use; Unity Play mode verification remains.
+- 2026-11-04, Codex: documented the PlayerMotor recovery and pending Play mode check in the Obsidian Player note and Roadmap.
+- 2026-11-04, Codex: user confirmed PlayerMotor no longer throws and wave HUD/timer work; marked both Play mode checks complete in Obsidian.

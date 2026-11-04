@@ -1,6 +1,7 @@
 using Game.Gameplay.Combat;
 using Game.Gameplay.Player;
 using Game.Gameplay.Weapons;
+using Game.Gameplay.Waves;
 using UnityEngine;
 
 namespace Game.Gameplay.DevTools
@@ -23,8 +24,10 @@ namespace Game.Gameplay.DevTools
         private string _lastHitText = "-";
         private GUIStyle _style;
         private GUIStyle _centerStyle;
+        private GUIStyle _waveStyle;
         private DevEnemySpawner _spawner;
         private DevPlayerRespawn _respawn;
+        private WaveDirector _waveDirector;
 
         private void OnEnable()
         {
@@ -39,6 +42,8 @@ namespace Game.Gameplay.DevTools
         private void Start()
         {
             _spawner = FindFirstObjectByType<DevEnemySpawner>();
+            if (_spawner != null && !_spawner.enabled) _spawner = null;
+            _waveDirector = FindFirstObjectByType<WaveDirector>();
             _respawn = GetComponent<DevPlayerRespawn>();
         }
 
@@ -62,6 +67,7 @@ namespace Game.Gameplay.DevTools
             {
                 _style = new GUIStyle(GUI.skin.label) { fontSize = 16, richText = true };
                 _centerStyle = new GUIStyle(_style) { alignment = TextAnchor.MiddleCenter, fontSize = 22 };
+                _waveStyle = new GUIStyle(_style) { fontSize = 19, fontStyle = FontStyle.Bold };
             }
 
             // Crosshair / hit marker
@@ -71,7 +77,18 @@ namespace Game.Gameplay.DevTools
                 : "+";
             GUI.Label(center, cross, _centerStyle);
 
-            GUILayout.BeginArea(new Rect(12f, 12f, 420f, 400f), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(12f, 12f, 460f, 460f), GUI.skin.box);
+            if (_waveDirector != null)
+            {
+                int shownWave = Mathf.Max(1, _waveDirector.CurrentWave);
+                GUILayout.Label($"WAVES CLEARED  {_waveDirector.ClearedWaveCount}/{_waveDirector.MaxWaves}", _waveStyle);
+                GUILayout.Label($"WAVE  {shownWave}/{_waveDirector.MaxWaves}", _style);
+                GUILayout.Label($"ENEMIES  {_waveDirector.AliveCount}/{_waveDirector.CurrentWaveEnemyCount}", _style);
+                if (_waveDirector.IsBetweenWaves)
+                {
+                    GUILayout.Label($"NEXT WAVE IN  {FormatTime(_waveDirector.TimeUntilNextWave)}", _waveStyle);
+                }
+            }
             if (_health != null) GUILayout.Label($"HP  {_health.Current:0}/{_health.Max:0}", _style);
             if (_motor != null && _motor.Stamina != null)
             {
@@ -105,6 +122,12 @@ namespace Game.Gameplay.DevTools
                 GUILayout.Label("WASD move, Shift sprint, Ctrl/C crouch, Space jump\nLMB fire, R reload, 1-3 / wheel weapons, Esc free cursor", _style);
             }
             GUILayout.EndArea();
+        }
+
+        private static string FormatTime(float seconds)
+        {
+            int totalSeconds = Mathf.CeilToInt(seconds);
+            return $"{totalSeconds / 60:00}:{totalSeconds % 60:00}";
         }
     }
 }

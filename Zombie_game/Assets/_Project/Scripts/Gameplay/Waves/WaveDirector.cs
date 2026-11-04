@@ -42,10 +42,17 @@ namespace Game.Gameplay.Waves
         private DirectorState _state;
         private float _timer;
         private int _waveNumber;
+        private int _clearedWaveCount;
+        private int _currentWaveEnemyCount;
 
         public int CurrentWave => _waveNumber;
-        public int AliveCount => _factory != null ? _factory.AliveCount : 0;
+        public int MaxWaves => _maxWaves;
+        public int ClearedWaveCount => _clearedWaveCount;
+        public int CurrentWaveEnemyCount => _currentWaveEnemyCount;
+        public int AliveCount => CountLivingEnemies();
         public int PendingCount => _pendingEnemies.Count;
+        public bool IsBetweenWaves => _state == DirectorState.Starting || _state == DirectorState.Lull;
+        public float TimeUntilNextWave => IsBetweenWaves ? Mathf.Max(0f, _timer) : 0f;
         public bool IsRunning => _state != DirectorState.Idle && _state != DirectorState.Completed;
         public bool IsCompleted => _state == DirectorState.Completed;
 
@@ -99,6 +106,8 @@ namespace Game.Gameplay.Waves
             _factory.DespawnAll();
             _pendingEnemies.Clear();
             _waveNumber = 0;
+            _clearedWaveCount = 0;
+            _currentWaveEnemyCount = 0;
             _waveRandom = new GameRandom(runSeed).Fork("waves");
             _timer = _initialDelay;
             _state = DirectorState.Starting;
@@ -139,6 +148,7 @@ namespace Game.Gameplay.Waves
             }
 
             _waveNumber = nextWaveNumber;
+            _currentWaveEnemyCount = composition.Count;
             _pendingEnemies.Clear();
             foreach (EnemyDefinition definition in composition) _pendingEnemies.Enqueue(definition);
             _timer = 0f;
@@ -225,6 +235,7 @@ namespace Game.Gameplay.Waves
         private void ClearCurrentWave()
         {
             if (_state == DirectorState.Lull || _state == DirectorState.Completed) return;
+            _clearedWaveCount++;
             _state = DirectorState.Lull;
             EventBus<WaveClearedEvent>.Raise(new WaveClearedEvent(_waveNumber));
 
@@ -238,6 +249,19 @@ namespace Game.Gameplay.Waves
             float min = Mathf.Min(_minLull, _maxLull);
             float max = Mathf.Max(_minLull, _maxLull);
             _timer = _waveRandom.Range(min, max);
+        }
+
+        private int CountLivingEnemies()
+        {
+            if (_factory == null) return 0;
+            int count = 0;
+            IReadOnlyList<EnemyController> enemies = _factory.Alive;
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                EnemyController enemy = enemies[i];
+                if (enemy != null && enemy.IsAlive) count++;
+            }
+            return count;
         }
     }
 }

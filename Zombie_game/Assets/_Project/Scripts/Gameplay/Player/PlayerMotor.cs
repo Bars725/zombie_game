@@ -33,24 +33,42 @@ namespace Game.Gameplay.Player
         public float HorizontalSpeed => _horizontalVelocity.magnitude;
         public PlayerMovementConfig Config => _config;
 
-        private void Awake()
+        private void Awake() => EnsureRuntimeState();
+
+        private void EnsureRuntimeState()
         {
-            _controller = GetComponent<CharacterController>();
+            if (_controller == null) _controller = GetComponent<CharacterController>();
+            if (_controller == null)
+            {
+                Debug.LogError($"{nameof(PlayerMotor)} on '{name}' requires a {nameof(CharacterController)}.", this);
+                enabled = false;
+                return;
+            }
+
             if (_config == null)
             {
                 Debug.LogError($"{nameof(PlayerMotor)} on '{name}' has no {nameof(PlayerMovementConfig)}. Using defaults.", this);
                 _config = ScriptableObject.CreateInstance<PlayerMovementConfig>();
             }
 
-            _stamina = new StaminaModel(_config.StaminaMax, _config.StaminaDrainPerSecond,
-                _config.StaminaRegenPerSecond, _config.StaminaRegenDelay, _config.StaminaResumeFraction);
+            if (_stamina == null)
+            {
+                _stamina = new StaminaModel(_config.StaminaMax, _config.StaminaDrainPerSecond,
+                    _config.StaminaRegenPerSecond, _config.StaminaRegenDelay, _config.StaminaResumeFraction);
+            }
 
-            _currentHeight = _config.StandHeight;
-            ApplyHeight(_currentHeight);
+            if (_currentHeight <= 0f)
+            {
+                _currentHeight = _config.StandHeight;
+                ApplyHeight(_currentHeight);
+            }
         }
 
         private void Update()
         {
+            if (_controller == null || _stamina == null || _config == null) EnsureRuntimeState();
+            if (_controller == null || _stamina == null || _config == null) return;
+
             float dt = Time.deltaTime;
             if (dt <= 0f) return;
 
