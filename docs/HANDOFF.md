@@ -1,5 +1,7 @@
 # HANDOFF — read this first (for Claude or any other AI model)
 
+**Game design lives in the Obsidian vault `obsidian_zombie_game/`** (in Russian; start from `Welcome.md`, ideas in `00 Инбокс/Инбокс.md`, rules in `99 Мета/Как работать с vault.md`). At the start of a session triage the Inbox, at the end update `04 Статус/Roadmap.md`.
+
 This file is the single source of truth on the project's state. **Update it at the end of every work session**
 (the "Status", "Next" and "Session log" sections). Design: `docs/GDD.md`. Code rules: `docs/ARCHITECTURE.md`.
 Art requests: `docs/ART_ASSETS.md`.
@@ -162,3 +164,4 @@ Format: `YYYY-MM-DD, model: what was done; what's left`. Only append.
 - 2026-11-04, Claude (Opus): from scratch to a playable range: repo/LFS, Unity 6.3 LTS, Core, Combat, player, weapons,
   enemies, NavMesh, first AI models (Husk, pistol), this file. 59 tests green. Left: commit the art (see Status), Wave Director.
 - 2026-11-04, Claude (Opus): imported sounds (P1) and wired them up. Requires running Tools > Audio > Apply Imported Audio in Unity (if not done yet) and committing.
+- 2026-11-04, Claude (Opus): design moved into the Obsidian vault (concept, systems, roadmap, Inbox, rules for AI).

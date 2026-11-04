@@ -19,3 +19,6 @@ Desktop.ini
 
 # Raw art drops from ComfyUI etc. (imported into Assets/_Project/Art by hand)
 /_incoming_art/
+
+# Obsidian personal UI state
+/obsidian_zombie_game/.obsidian/workspace*.json
