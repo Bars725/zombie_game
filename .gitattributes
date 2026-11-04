@@ -1,90 +1,139 @@
-# Normalize text files to LF in the repo
-* text=auto
+# Repo-wide attributes. Must live at the repo ROOT: [attr] macros only work in the top-level file.
+# Based on gitattributes/gitattributes Unity template (MIT), adapted for the Unity project in /Zombie_game.
 
-# Code
-*.cs        text diff=csharp
-*.shader    text
-*.hlsl      text
-*.cginc     text
-*.compute   text
-*.asmdef    text
-*.asmref    text
-*.json      text
-*.md        text
-*.uxml      text
-*.uss       text
-*.inputactions text
+# Macros
+[attr]lfs           filter=lfs diff=lfs merge=lfs -text
+[attr]unity-json    text=auto eol=lf linguist-language=json
+# text=auto: line endings are converted only for files git detects as text (binary .asset stays untouched).
+# merge=unityyamlmerge: used only if the UnityYAMLMerge driver is configured; otherwise git does a normal merge.
+[attr]unity-yaml    text=auto eol=lf merge=unityyamlmerge linguist-language=yaml
 
-# Windows scripts must stay CRLF or cmd.exe can misbehave
-*.bat       text eol=crlf
-*.cmd       text eol=crlf
+# Default: normalize text files
+*               text=auto
 
-# Unity YAML assets (Force Text serialization) - keep LF everywhere.
-# text=auto + eol=lf: converts only files git detects as text, so the odd binary .asset is left alone.
-*.unity         text=auto eol=lf
-*.prefab        text=auto eol=lf
-*.asset         text=auto eol=lf
-*.meta          text=auto eol=lf
-*.mat           text=auto eol=lf
-*.anim          text=auto eol=lf
-*.controller    text=auto eol=lf
-*.overrideController text=auto eol=lf
-*.physicMaterial text=auto eol=lf
-*.physicsMaterial2D text=auto eol=lf
-*.playable      text=auto eol=lf
-*.mask          text=auto eol=lf
-*.brush         text=auto eol=lf
-*.flare         text=auto eol=lf
-*.fontsettings  text=auto eol=lf
-*.guiskin       text=auto eol=lf
-*.giparams      text=auto eol=lf
-*.renderTexture text=auto eol=lf
-*.spriteatlas   text=auto eol=lf
-*.terrainlayer  text=auto eol=lf
-*.mixer         text=auto eol=lf
-*.shadervariants text=auto eol=lf
-*.preset        text=auto eol=lf
-*.lighting      text=auto eol=lf
+# Docs / scripts
+*.md            text
+*.json          text
+*.txt           text
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
 
-# ---------- Git LFS (binary assets) ----------
-# Run `git lfs install` once on this machine before committing any of these.
-# Images
-*.png  filter=lfs diff=lfs merge=lfs -text
-*.jpg  filter=lfs diff=lfs merge=lfs -text
-*.jpeg filter=lfs diff=lfs merge=lfs -text
-*.tga  filter=lfs diff=lfs merge=lfs -text
-*.tif  filter=lfs diff=lfs merge=lfs -text
-*.tiff filter=lfs diff=lfs merge=lfs -text
-*.psd  filter=lfs diff=lfs merge=lfs -text
-*.exr  filter=lfs diff=lfs merge=lfs -text
-*.hdr  filter=lfs diff=lfs merge=lfs -text
-*.gif  filter=lfs diff=lfs merge=lfs -text
+# Unity source files
+*.cginc         text
+*.compute       text linguist-language=hlsl
+*.cs            text diff=csharp
+*.hlsl          text linguist-language=hlsl
+*.raytrace      text linguist-language=hlsl
+*.shader        text
+
+# Unity JSON files
+*.asmdef        unity-json
+*.asmref        unity-json
+*.index         unity-json
+*.inputactions  unity-json
+*.shadergraph   unity-json
+*.shadersubgraph unity-json
+
+# UI Toolkit
+*.tss           text diff=css linguist-language=css
+*.uss           text diff=css linguist-language=css
+*.uxml          text linguist-language=xml linguist-detectable
+
+# Unity YAML files
+*.anim          unity-yaml
+*.asset         unity-yaml
+*.brush         unity-yaml
+*.controller    unity-yaml
+*.flare         unity-yaml
+*.fontsettings  unity-yaml
+*.giparams      unity-yaml
+*.guiskin       unity-yaml
+*.lighting      unity-yaml
+*.mask          unity-yaml
+*.mat           unity-yaml
+*.meta          unity-yaml
+*.mixer         unity-yaml
+*.overrideController unity-yaml
+*.playable      unity-yaml
+*.prefab        unity-yaml
+*.preset        unity-yaml
+*.renderTexture unity-yaml
+*.scenetemplate unity-yaml
+*.shadervariants unity-yaml
+*.signal        unity-yaml
+*.spriteatlas   unity-yaml
+*.spriteatlasv2 unity-yaml
+*.terrainlayer  unity-yaml
+*.unity         unity-yaml
+*.physicMaterial unity-yaml
+*.physicsMaterial2D unity-yaml
+
+# GitHub stats/diffs: hide third-party plugins and the lock file
+Zombie_game/Assets/Plugins/**           linguist-generated
+Zombie_game/Packages/packages-lock.json linguist-generated
+
+# ---------- Git LFS ----------
+# Run `git lfs install` once per machine before committing any of these.
+*.cubemap       lfs
+*.unitypackage  lfs
+# 3D models
+*.3dm lfs
+*.3ds lfs
+*.blend lfs
+*.c4d lfs
+*.dae lfs
+*.dxf lfs
+*.FBX lfs
+*.fbx lfs
+*.glb lfs
+*.gltf lfs
+*.ma lfs
+*.max lfs
+*.mb lfs
+*.obj lfs
+*.ply lfs
+*.skp lfs
+*.stl lfs
 # Audio
-*.wav  filter=lfs diff=lfs merge=lfs -text
-*.mp3  filter=lfs diff=lfs merge=lfs -text
-*.ogg  filter=lfs diff=lfs merge=lfs -text
-*.aif  filter=lfs diff=lfs merge=lfs -text
-*.aiff filter=lfs diff=lfs merge=lfs -text
-*.flac filter=lfs diff=lfs merge=lfs -text
-# 3D
-*.fbx   filter=lfs diff=lfs merge=lfs -text
-*.FBX   filter=lfs diff=lfs merge=lfs -text
-*.obj   filter=lfs diff=lfs merge=lfs -text
-*.blend filter=lfs diff=lfs merge=lfs -text
-*.dae   filter=lfs diff=lfs merge=lfs -text
-*.3ds   filter=lfs diff=lfs merge=lfs -text
-*.glb   filter=lfs diff=lfs merge=lfs -text
+*.aif lfs
+*.aiff lfs
+*.flac lfs
+*.mp3 lfs
+*.ogg lfs
+*.wav lfs
 # Video
-*.mp4  filter=lfs diff=lfs merge=lfs -text
-*.mov  filter=lfs diff=lfs merge=lfs -text
-*.webm filter=lfs diff=lfs merge=lfs -text
+*.avi lfs
+*.mov lfs
+*.mp4 lfs
+*.webm lfs
+*.wmv lfs
+# Images
+*.bmp lfs
+*.exr lfs
+*.gif lfs
+*.hdr lfs
+*.jpeg lfs
+*.jpg lfs
+*.png lfs
+*.psd lfs
+*.tga lfs
+*.tif lfs
+*.tiff lfs
+*.webp lfs
+# Archives
+*.7z lfs
+*.gz lfs
+*.rar lfs
+*.zip lfs
+# Native binaries
+*.dll lfs
+*.so lfs
+*.exe lfs
 # Fonts
-*.ttf  filter=lfs diff=lfs merge=lfs -text
-*.otf  filter=lfs diff=lfs merge=lfs -text
-# Baked data that is binary or very large
-LightingData.asset filter=lfs diff=lfs merge=lfs -text !eol
-# Archives / native binaries
-*.zip  filter=lfs diff=lfs merge=lfs -text
-*.7z   filter=lfs diff=lfs merge=lfs -text
-*.dll  filter=lfs diff=lfs merge=lfs -text
-*.so   filter=lfs diff=lfs merge=lfs -text
+*.otf lfs
+*.ttf lfs
+# Documents
+*.pdf lfs
+
+# Baked lighting data is binary
+LightingData.asset lfs !eol

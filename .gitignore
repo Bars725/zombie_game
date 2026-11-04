@@ -1,69 +1,18 @@
-# ===========================================================
-# Repo layout:
-#   /ProjectBreach/   Unity project (Assets, Packages, ProjectSettings)
-#   /docs/            design docs
-#   /tools/           CLI scripts (tests, builds)
-#   /_out/            local output of tools (logs, test results, builds)
-# ===========================================================
+# Repo-level ignores.
+# Unity-specific rules live in Zombie_game/.gitignore (GitHub Unity template, placed at the
+# Unity project root as the template expects).
 
-# --- Local tool output ---
+# Local tool output (logs, test results, builds)
 /_out/
 
-# --- Unity generated folders (never commit) ---
-/ProjectBreach/[Ll]ibrary/
-/ProjectBreach/[Tt]emp/
-/ProjectBreach/[Oo]bj/
-/ProjectBreach/[Bb]uild/
-/ProjectBreach/[Bb]uilds/
-/ProjectBreach/[Ll]ogs/
-/ProjectBreach/[Uu]ser[Ss]ettings/
-/ProjectBreach/[Mm]emoryCaptures/
-/ProjectBreach/[Rr]ecordings/
-/ProjectBreach/.utmp/
-
-# Asset meta files MUST be committed
-!/ProjectBreach/[Aa]ssets/**/*.meta
-
-# Addressables build output (regenerated on build)
-/ProjectBreach/[Aa]ssets/[Ss]treaming[Aa]ssets/aa/
-/ProjectBreach/[Aa]ssets/[Ss]treaming[Aa]ssets/aa.meta
-/ProjectBreach/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
-
-# Third-party tooling folders that regenerate
-/ProjectBreach/[Aa]ssets/Plugins/Editor/JetBrains*
-/ProjectBreach/[Aa]ssets/AssetStoreTools*
-
-# --- IDE / OS ---
+# IDE / OS
 .vs/
 .vscode/
 .idea/
-.consulo/
-*.csproj
-*.unityproj
-*.sln
-*.slnx
-*.suo
-*.user
-*.userprefs
-*.pidb
-*.booproj
-*.svd
-*.pdb
-*.mdb
-*.opendb
-*.VC.db
-*.pidb.meta
-*.pdb.meta
-*.mdb.meta
-*.tmp
+*.DotSettings.user
 Thumbs.db
 Desktop.ini
 .DS_Store
 
-# --- Misc Unity artifacts ---
-sysinfo.txt
-crashlytics-build.properties
-*.unitypackage
-*.apk
-*.aab
-ExportedObj/
+# Files moved aside by tools (safe to delete by hand)
+/_to_delete/

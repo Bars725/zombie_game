@@ -9,7 +9,7 @@ rem ------------------------------------------------------------------
 setlocal
 
 for %%I in ("%~dp0..") do set "ROOT=%%~fI"
-set "PROJECT=%ROOT%\ProjectBreach"
+set "PROJECT=%ROOT%\Zombie_game"
 set "OUT=%ROOT%\_out"
 
 set "PLATFORM=%~1"

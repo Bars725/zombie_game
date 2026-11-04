@@ -7,7 +7,7 @@ inspired by the wave-survival genre; nothing is copied from existing games.
 
 | Topic | Decision |
 |---|---|
-| Engine | Unity 6 LTS, URP, Input System, AI Navigation, ProBuilder, Unity Test Framework |
+| Engine | Unity 6.3 LTS (6000.3.28f1), URP, Input System, AI Navigation, ProBuilder, Unity Test Framework |
 | Platform | PC, single-player, offline, keyboard + mouse (gamepad later) |
 | Run structure | MVP: **one large arena per run** (25–35 min) ending in extraction. Architecture ready for a multi-arena route later |
 | Puzzles | Mostly solved in **lulls between waves**; optional "under fire" bonus puzzles |
@@ -17,7 +17,7 @@ inspired by the wave-survival genre; nothing is copied from existing games.
 | Story | Minimal framing only |
 | Saving | Meta-progression + settings only. No mid-run saves in MVP |
 | Art | Greybox (ProBuilder + capsules) until week 3, then CC0 assets |
-| Version control | Git + Git LFS, GitHub remote, Unity project in `ProjectBreach/` |
+| Version control | Git + Git LFS, GitHub remote, Unity project in `Zombie_game/` |
 
 ## Setting (minimal)
 

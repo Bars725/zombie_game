@@ -1,6 +1,6 @@
 # Project Breach (working title)
 
-Single-player roguelike survival FPS for PC, built in Unity 6 LTS (URP).
+Game folder: `Zombie_game/` (Unity project). Single-player roguelike survival FPS for PC, built in Unity 6.3 LTS (URP).
 Handcrafted arenas with puzzles, wave-based enemies, weapon/character upgrades,
 meta-progression between runs. Original IP — no names or assets from other games.
 
@@ -8,7 +8,7 @@ meta-progression between runs. Original IP — no names or assets from other gam
 
 | Path | What |
 |---|---|
-| `ProjectBreach/` | Unity project (open this folder in Unity Hub) |
+| `Zombie_game/` | Unity project (open this folder in Unity Hub) |
 | `docs/GDD.md` | Agreed design and MVP scope |
 | `tools/` | Windows CLI scripts (tests, builds) |
 | `_out/` | Local tool output — logs, test results, builds (git-ignored) |
@@ -16,8 +16,8 @@ meta-progression between runs. Original IP — no names or assets from other gam
 ## First-time setup
 
 1. Install Git LFS once: `git lfs install`
-2. Install the Unity Editor version listed in `ProjectBreach/ProjectSettings/ProjectVersion.txt` via Unity Hub.
-3. Open `ProjectBreach/` in Unity Hub.
+2. Install the Unity Editor version listed in `Zombie_game/ProjectSettings/ProjectVersion.txt` via Unity Hub.
+3. Open `Zombie_game/` in Unity Hub.
 
 ## CLI
 
@@ -28,6 +28,9 @@ tools\run_tests.bat            :: EditMode tests
 tools\run_tests.bat PlayMode   :: PlayMode tests
 ```
 
-The scripts find the editor from `ProjectVersion.txt` under
-`%ProgramFiles%\Unity\Hub\Editor\<version>\`. If your editor lives elsewhere,
-set `UNITY_EXE` to the full path of `Unity.exe` before running them.
+The scripts read the editor version from `ProjectVersion.txt` and look for it in Unity Hub's
+custom install folder, `D:\Unity\`, and `%ProgramFiles%\Unity\Hub\Editor\`. If your editor
+lives elsewhere, set `UNITY_EXE` to the full path of `Unity.exe` before running them.
+
+`tools\git_first_commit.bat` is a one-time script: it moves Unity Hub's nested repo aside
+into `_to_delete\` and makes the first project commit.
