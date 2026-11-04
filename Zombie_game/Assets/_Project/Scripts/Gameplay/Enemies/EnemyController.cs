@@ -39,6 +39,10 @@ namespace Game.Gameplay.Enemies
         public EnemyDefinition Definition { get; private set; }
         public State CurrentState { get; private set; } = State.Inactive;
         public Health Health => _health;
+        public Transform Visual => _visual;
+        public NavMeshAgent Agent => _agent;
+        public MeleeAttackCycle.Phase AttackPhase => _attack != null ? _attack.Current : MeleeAttackCycle.Phase.Idle;
+        public float AttackPhaseProgress => _attack != null ? _attack.PhaseProgress : 0f;
         public bool IsAlive => CurrentState != State.Dead && CurrentState != State.Inactive && _health.IsAlive;
 
         /// <summary>Fired once when the enemy dies (before the corpse timer).</summary>

@@ -15,6 +15,18 @@ namespace Game.Gameplay.Enemies
         public Phase Current { get; private set; } = Phase.Idle;
         public bool IsBusy => Current != Phase.Idle;
 
+        /// <summary>0..1 progress through the current phase (0 when idle). Drives telegraph visuals.</summary>
+        public float PhaseProgress
+        {
+            get
+            {
+                float duration = Current == Phase.Windup ? Windup : Current == Phase.Recovery ? Recovery : 0f;
+                if (duration <= 0f) return Current == Phase.Idle ? 0f : 1f;
+                float t = 1f - _timer / duration;
+                return t < 0f ? 0f : t > 1f ? 1f : t;
+            }
+        }
+
         private float _timer;
 
         public MeleeAttackCycle(float windup, float recovery)

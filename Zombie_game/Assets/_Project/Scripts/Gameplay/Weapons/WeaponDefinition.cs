@@ -45,6 +45,10 @@ namespace Game.Gameplay.Weapons
         [Header("Economy")]
         [SerializeField, Min(0)] private int _price = 500;
 
+        [Header("Presentation")]
+        [Tooltip("First-person model, placed at the camera's viewmodel socket. Empty = placeholder box.")]
+        [SerializeField] private GameObject _viewModel;
+
         public string Id => _id;
         public string DisplayName => _displayName;
         public float Damage => _damage;
@@ -63,6 +67,7 @@ namespace Game.Gameplay.Weapons
         public int MaxReserve => _maxReserve;
         public int StartingReserve => Mathf.Min(_startingReserve, _maxReserve);
         public int Price => _price;
+        public GameObject ViewModel => _viewModel;
 
         /// <summary>Damage per pellet at a distance, with linear falloff between FalloffStart and FalloffEnd.</summary>
         public float DamageAtDistance(float distance)

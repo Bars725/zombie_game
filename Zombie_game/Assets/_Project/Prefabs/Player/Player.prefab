@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2339787241362490930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8833502456746803854}
+  m_Layer: 0
+  m_Name: ViewmodelSocket
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8833502456746803854
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2339787241362490930}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.2, y: -0.17, z: 0.42}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6781449092086727089}
+  m_Father: {fileID: 8941095705517993991}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3612110906302028464
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,6 +230,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.DevTools.DevPlayerRespawn
   _respawnDelay: 2
+  _spawnProtection: 2
+  _clearEnemiesOnRespawn: 1
 --- !u!1 &3852753511860437789
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,11 +291,11 @@ Transform:
   m_GameObject: {fileID: 4637801276324071581}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.22, y: -0.2, z: 0.45}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.08, y: 0.1, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8941095705517993991}
+  m_Father: {fileID: 8833502456746803854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2485608493308993971
 MeshFilter:
@@ -331,6 +365,7 @@ GameObject:
   - component: {fileID: 8941095705517993991}
   - component: {fileID: 3914335491602664261}
   - component: {fileID: 3014948551734528270}
+  - component: {fileID: 721539649183832499}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: MainCamera
@@ -351,7 +386,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6781449092086727089}
+  - {fileID: 8833502456746803854}
   m_Father: {fileID: 8735785915201615093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &3914335491602664261
@@ -413,3 +448,24 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9069018513673439364}
   m_Enabled: 1
+--- !u!114 &721539649183832499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9069018513673439364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5d81b140fa00b488907747aeb30990, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.Weapons.WeaponViewModel
+  _weapons: {fileID: 3726668639539453987}
+  _socket: {fileID: 8833502456746803854}
+  _placeholder: {fileID: 4637801276324071581}
+  _kickBack: 0.05
+  _kickPitch: 6
+  _kickRecovery: 18
+  _reloadDrop: 0.12
+  _reloadTilt: 30
+  _poseBlendSpeed: 10
