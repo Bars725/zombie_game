@@ -26,7 +26,11 @@ Close the Unity Editor first (batchmode cannot open a project that is already op
 ```bat
 tools\run_tests.bat            :: EditMode tests
 tools\run_tests.bat PlayMode   :: PlayMode tests
+tools\build.bat [dev]          :: Windows build -> _out\Builds\Windows\ZombieGame.exe
+tools\commit.bat               :: commit + push using _out\commit_msg.txt (with safety checks)
 ```
+
+Code layout and rules: `docs/ARCHITECTURE.md`. Design: `docs/GDD.md`.
 
 The scripts read the editor version from `ProjectVersion.txt` and look for it in Unity Hub's
 custom install folder, `D:\Unity\`, and `%ProgramFiles%\Unity\Hub\Editor\`. If your editor
