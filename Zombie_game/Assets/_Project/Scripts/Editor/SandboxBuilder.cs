@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
+using Game.Gameplay.Audio;
 using Game.Gameplay.Combat;
 using Game.Gameplay.DevTools;
 using Game.Gameplay.Enemies;
 using Game.Gameplay.Player;
 using Game.Gameplay.Weapons;
+using Game.Gameplay.Waves;
 using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -304,7 +306,7 @@ namespace Game.EditorTools
         {
             var root = new GameObject("EnemySpawning");
             var factory = root.AddComponent<EnemyFactory>();
-            var spawner = root.AddComponent<DevEnemySpawner>();
+            var director = root.AddComponent<WaveDirector>();
 
             Vector3[] points =
             {
@@ -322,9 +324,10 @@ namespace Game.EditorTools
             }
 
             AssetDatabase.SaveAssets();
-            SetRefs(spawner, ("_factory", factory));
-            SetArray(spawner, "_definitions", enemies.Cast<Object>().ToArray());
-            SetArray(spawner, "_spawnPoints", transforms);
+            SoundCue waveStart = AssetDatabase.LoadAssetAtPath<SoundCue>("Assets/_Project/Data/Audio/SC_Wave_Start.asset");
+            SetRefs(director, ("_factory", factory), ("_waveStartSound", waveStart));
+            SetArray(director, "_definitions", enemies.Cast<Object>().ToArray());
+            SetArray(director, "_spawnPoints", transforms);
         }
 
         private static EnemyController LoadOrCreateEnemyPrefab(string name, Material material, float width)

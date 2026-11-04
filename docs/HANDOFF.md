@@ -72,6 +72,7 @@ Several AI assistants (Claude, other models, different chats) may work on the pr
 | `run_tests.bat [EditMode|PlayMode]` | batchmode tests → `_out\TestResults`, `_out\Logs` (editor must be closed) |
 | `build.bat [dev]` | Windows build → `_out\Builds\Windows\ZombieGame.exe` (not run yet) |
 | `commit.bat` | `git add -A` + safety checks + commit with the message from **`_out\commit_msg.txt`** + push |
+| `archive_used_art.bat` | SHA-256 matches incoming files to `Zombie_game/Assets/_Project`, archives verified copies, then removes source files |
 | `find_unity.bat` | finds Unity.exe from ProjectVersion.txt (Hub folder, `D:\Unity`, Program Files) |
 | `cleanup_template.bat`, `git_first_commit.bat` | one-off, already done |
 
@@ -99,7 +100,7 @@ Assemblies: `Game.Core` → `Game.Gameplay` (+InputSystem, AI.Navigation) → `G
 | Combat | `DamageInfo`, `IDamageable`, `HealthModel` (pure; segmented regen), `Health`, `HitZone` (head ×2), `DamageTakenEvent`/`EntityDiedEvent` |
 | Player | `PlayerInputActions` (bindings in code), `PlayerInputReader` (cursor, Blocked, DebugHeldKeys), `PlayerLook`, `PlayerMotor` (CharacterController, sprint/stamina, crouch, jump with coyote+buffer), `StaminaModel`, `PlayerMovementConfig` SO |
 | Weapons | `WeaponDefinition` SO (falloff, pellets, spread, Auto/Semi, Price, ViewModel), `WeaponInstance` (ammo/reload), `PlayerWeaponController` (hitscan, 1-3/wheel, events Fired/Hit/WeaponChanged), `WeaponViewModel` (models + recoil) |
-| Enemies | `EnemyDefinition` SO (stats, SpawnCost, ScrapOnKill), `EnemyController` (FSM Spawning→Chasing→Attacking→Dead, NavMeshAgent), `MeleeAttackCycle` (pure), `EnemyFactory` (ObjectPool), `PlayerAnchor` (target), `RuntimeNavMeshBaker`, `EnemyProceduralAnimator` |
+| Enemies / Waves | `EnemyDefinition` SO (stats, SpawnCost, ScrapOnKill), `EnemyController` (FSM Spawning→Chasing→Attacking→Dead, NavMeshAgent), `MeleeAttackCycle` (pure), `EnemyFactory` (ObjectPool), `PlayerAnchor` (target), `RuntimeNavMeshBaker`, `EnemyProceduralAnimator`; `WaveComposition` + `WaveDirector` (budget queue, cap, visibility-safe spawns, lulls, events) |
 | DevTools | `DebugHud` (IMGUI, temporary), `TargetDummy`, `DamageVolume`, `DevEnemySpawner` (F1/F2), `DevPlayerRespawn` |
 | Editor | `BuildScript`, `SandboxBuilder` (Tools/Sandbox: layers, data, prefabs, `Sandbox_TestRange` scene), `ArtSetup` (Tools/Art/Apply Imported Art) |
 | Audio | `SoundCue` SO, `SfxPlayer` (pool of 24 AudioSources), `PlayerAudio`; editor `AudioSetup` |
@@ -129,6 +130,10 @@ Jump while sprinting: coyote time/buffer/ground probe added — **the user has n
 P2 audio assets have been imported and `Tools > Audio > Apply Imported Audio` has been applied in Unity; cue assets,
 enemy definitions, the player prefab, and the test-range scene are modified locally. Gameplay audio still needs a Play
 mode check.
+Wave Director logic and event contracts are implemented. `SandboxBuilder` now creates it with the test range; the
+currently saved scene needs a rebuild before runtime verification.
+These changes remain uncommitted. The tracked `.obsidian/graph.json` also has a local zoom change, and `commit.bat`
+stages all files; keep that user setting out of the commit.
 
 Commits on GitHub: repo setup → Unity project → Core/Combat → player/weapons/range → enemies.
 The art import (Husk, pistol, ArtSetup, WeaponViewModel, EnemyProceduralAnimator) is committed on `main`.
@@ -136,8 +141,9 @@ The art import (Husk, pistol, ArtSetup, WeaponViewModel, EnemyProceduralAnimator
 
 ## 6. Next (in priority order)
 
-1. **Wave Director**: waves by budget (`EnemyDefinition.SpawnCost`), cap on simultaneous enemies, lulls of 20–40 s, scaling
-   with wave number, events `WaveStarted/WaveCleared`, seed via `GameRandom.Fork("waves")`. Replaces `DevEnemySpawner`.
+1. **Wave Director**: implemented in `Scripts/Gameplay/Waves`; `SandboxBuilder` now places it instead of
+   `DevEnemySpawner`. Rebuild the test range and verify wave pacing, spawn visibility/distance, cap, and siren in Play mode.
+   Uses `EnemyDefinition.SpawnCost`, 20–40 s lulls, `WaveStarted/WaveCleared/WavesCompleted`, and `GameRandom.Fork("waves")`.
 2. **Economy**: `Wallet` (pure, tests), Scrap for hits/kills (`ScrapOnKill`) via `EntityDiedEvent`, show in HUD.
 3. **Interaction**: `IInteractable` + raycast from the camera (E), wall-buys (`WeaponDefinition.Price`), ammo station,
    Scrap doors, sectors (spawn points activate when a sector opens).
@@ -169,3 +175,4 @@ Format: `YYYY-MM-DD, model: what was done; what's left`. Only append.
 - 2026-11-04, Claude (Opus): imported sounds (P1) and wired them up. Requires running Tools > Audio > Apply Imported Audio in Unity (if not done yet) and committing.
 - 2026-11-04, Claude (Opus): design moved into the Obsidian vault (concept, systems, roadmap, Inbox, rules for AI).
 - 2026-11-04, Codex: imported P2 audio variants, added player audio hooks and looping facility ambience, prepared the wave siren cue; Unity import/setup and Wave Director remain.
+- 2026-11-04, Codex: implemented budget-based Wave Director and event flow, switched generated test range from dev spawner, added safe SHA-256 resource archiver for `_incoming_art`; Unity rebuild/Play mode verification remains.
