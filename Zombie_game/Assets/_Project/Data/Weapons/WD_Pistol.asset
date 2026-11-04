@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a72ca2aa2061bf94a8bb835f278fc4f4, type: 3}
+  m_Name: WD_Pistol
+  m_EditorClassIdentifier: Game.Gameplay::Game.Gameplay.Weapons.WeaponDefinition
+  _id: pistol
+  _displayName: Pistol
+  _damage: 25
+  _damageType: 1
+  _pelletsPerShot: 1
+  _range: 100
+  _falloffStart: 15
+  _falloffEnd: 40
+  _minDamageMultiplier: 0.6
+  _fireMode: 0
+  _roundsPerMinute: 400
+  _spreadDegrees: 0.6
+  _reloadTime: 1.4
+  _magazineSize: 12
+  _maxReserve: 96
+  _startingReserve: 48
+  _price: 0
